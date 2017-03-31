@@ -1,0 +1,122 @@
+calcent<-function(data){  
+  nument<-length(data[,1.0])  
+  key<-rep("a",nument)  
+  for(i in 1:nument)  
+    key[i]<-data[i,length(data)]  
+  ent<-0  
+  prob<-table(key)/nument  
+  for(i in 1:length(prob))  
+    ent=ent-prob[i]*log(prob[i],2)  
+  return(ent)  
+} 
+
+
+
+calcent(heart_train)
+
+library(rpart)
+tree1 <- rpart(Y~
+        age+
+        sex+ 
+        chestPainType+
+        restingBloodPressure+
+        serumCholestoral+
+        fastingBloodingSugar+
+        restingElectrocardiographicResults+ 
+        maxHeartRateAchieved+
+        exerciseInducedAngina+ 
+        oldpeak+
+        slopeOfThePeakExerciseSTSegment+ 
+        numberOfMajorVessels+thal, method="class",data=heart)
+
+
+heart<-read.csv("C:/Users/elvis/Desktop/heart.csv",header=TRUE,sep=" ")
+
+heart_train=heart[1:68,]
+
+heart_test=heart[69:270,]
+
+tree <- rpart(Y~
+                 age+
+                 sex+ 
+                 chestPainType+
+                 restingBloodPressure+
+                 serumCholestoral+
+                 fastingBloodingSugar+
+                 restingElectrocardiographicResults+ 
+                 maxHeartRateAchieved+
+                 exerciseInducedAngina+ 
+                 oldpeak+
+                 slopeOfThePeakExerciseSTSegment+ 
+                 numberOfMajorVessels+thal, method="class",data=heart_train)
+
+tree <- rpart(Y~
+                 age+
+                 sex+ 
+                 chestPainType+
+                 restingBloodPressure+
+                 serumCholestoral+
+                 fastingBloodingSugar+
+                 restingElectrocardiographicResults+ 
+                 maxHeartRateAchieved+
+                 exerciseInducedAngina+ 
+                 oldpeak+
+                 slopeOfThePeakExerciseSTSegment+ 
+                 numberOfMajorVessels+thal, method="class",data=heart_train,parms=list(split="information"))
+rpart.plot((tree))
+printcp(tree)
+result <- predict(tree,heart_test,type="class")
+print(result)
+count_result(result,heart_test)
+
+count_result <- function(result,data_test){  
+  n <- length(result)  
+  count_right <- 0  
+  i <- 1  
+  for (i in 1:n){  
+    if (result[i]==data_test[i,7]){  
+      count_right = count_right+1  
+    }  
+  }  
+  print(count_right/n)  
+} 
+
+
+V<-read.csv("C:/Users/elvis/Desktop/Vertebral Column Data Set.csv",header=TRUE,sep=" ")
+
+V_train=V[1:232,]
+V_test=V[233:310,]
+
+tree <- rpart(class~
+                pelvicIncidence+
+                pelvicTilt+
+                lumbarLordosisAngle+
+                sacralSlope+
+                pelvicRadius +
+                gradeOfSpondylolisthesis,
+              method="class",data=V_train)
+
+tree <- rpart(class~
+                pelvicIncidence+
+                pelvicTilt+
+                lumbarLordosisAngle+
+                sacralSlope+
+                pelvicRadius +
+                gradeOfSpondylolisthesis,
+              method="class",data=V_train,parms=list(split="information"))
+
+rpart.plot((tree))
+printcp(tree)
+result <- predict(tree,V_test,type="class")
+print(result)
+count_result(result,V_test)
+              
+                
+library(graphics)
+pairs(V[,1:6], pch =c(22,21,23)[unclass(V$class)], bg = c("red", "green", "blue")[unclass(V$class)])
+
+sacralSlope
+
+
+plot(V$gradeOfSpondylolisthesis, V$sacralSlope, pch=c(22,21,23)[unclass(V$class)], bg=c("red","green","blue")[unclass(V$class)])
+
